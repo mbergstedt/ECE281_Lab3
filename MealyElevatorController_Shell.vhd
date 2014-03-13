@@ -200,17 +200,18 @@ floor <= "0001" when (floor_state = floor1) else
 			"0100" when (floor_state = floor4) else
 			"0001";
 -- dependent on up_down and floor
-nextfloor <= "0001" when (((floor_state = floor2) and (up_down = '0')) -- floor 2 going down
-									or ((floor_state = floor1) and (stop = '1'))) else -- floor 1 stopped
+nextfloor <= "0001" when ((floor_state = floor1) and (stop = '1')) else -- check if they are stopped first to show
+				 "0010" when ((floor_state = floor2) and (stop = '1')) else -- floor that they are on
+				 "0011" when ((floor_state = floor3) and (stop = '1')) else
+				 "0100" when ((floor_state = floor4) and (stop = '1')) else
+				 
+				 "0001" when ((floor_state = floor2) and (up_down = '0')) else-- floor 2 going down
 				 "0010" when (((floor_state = floor1) and (up_down = '1')) -- floor 1 going up
-									or ((floor_state = floor3) and (up_down = '0')) -- floor 3 going down
-									or ((floor_state = floor2) and (stop = '1'))) else -- floor 2 stopped
+									or ((floor_state = floor3) and (up_down = '0'))) else -- floor 3 going down
 				 "0011" when (((floor_state = floor2) and (up_down = '1')) -- floor 2 going up
-									or ((floor_state = floor4) and (up_down = '0')) -- floor 4 going down
-									or ((floor_state = floor3) and (stop = '1'))) else -- floor 3 stopped
-				 "0100" when ((((floor_state = floor3) or (floor_state = floor4))
-									and (up_down = '1')) -- floor 3 going up or top floor still reading up
-									or (stop = '1')) else -- must be at floor 4 at this point
+									or ((floor_state = floor4) and (up_down = '0'))) else -- floor 4 going down
+				 "0100" when (((floor_state = floor3) or (floor_state = floor4))
+									and (up_down = '1')) else -- floor 3 going up or top floor still reading up
 				 "0001";
 
 end Behavioral;
