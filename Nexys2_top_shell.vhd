@@ -91,7 +91,7 @@ signal ClockBus_sig : STD_LOGIC_VECTOR (26 downto 0);
 --------------------------------------------------------------------------------------
 --Insert your design's component declaration below	
 --------------------------------------------------------------------------------------
-
+	-- include Moore
 	COMPONENT MooreElevatorController_Shell
 	PORT(
 		clk : IN std_logic;
@@ -101,13 +101,25 @@ signal ClockBus_sig : STD_LOGIC_VECTOR (26 downto 0);
 		floor : OUT std_logic_vector(3 downto 0)
 		);
 	END COMPONENT;
+	-- include Mealy
+	COMPONENT MealyElevatorController_Shell
+	PORT(
+		clk : IN std_logic;
+		reset : IN std_logic;
+		stop : IN std_logic;
+		up_down : IN std_logic;          
+		floor : OUT std_logic_vector(3 downto 0);
+		nextfloor : OUT std_logic_vector(3 downto 0)
+		);
+	END COMPONENT;
 
 
 --------------------------------------------------------------------------------------
 --Insert any required signal declarations below
 --------------------------------------------------------------------------------------
 
-signal Moore_output : std_logic_vector(3 downto 0);
+signal floor_output : std_logic_vector(3 downto 0);
+signal next_floor_output : std_logic_vector(3 downto 0);
 
 begin
 
@@ -127,12 +139,24 @@ LED <= CLOCKBUS_SIG(26 DOWNTO 19);
 ----------------------------------
 -- Instantiate Moore Controller --
 ----------------------------------
-	Inst_MooreElevatorController_Shell: MooreElevatorController_Shell PORT MAP(
+--	Inst_MooreElevatorController_Shell: MooreElevatorController_Shell PORT MAP(
+--		clk => ClockBus_sig(25),
+--		reset => btn(0),
+--		stop => switch(1),
+--		up_down => switch(0),
+--		floor => floor_output
+--	);
+	
+----------------------------------
+-- Instantiate Mealy Controller --
+----------------------------------
+	Inst_MealyElevatorController_Shell: MealyElevatorController_Shell PORT MAP(
 		clk => ClockBus_sig(25),
-		reset => btn(3),
+		reset => btn(0),
 		stop => switch(1),
 		up_down => switch(0),
-		floor => Moore_output
+		floor => floor_output,
+		nextfloor => next_floor_output
 	);
 
 --------------------------------------------------------------------------------------	
@@ -145,8 +169,8 @@ LED <= CLOCKBUS_SIG(26 DOWNTO 19);
 --		  Example: if you are not using 7-seg display #3 set nibble3 to "0000"
 --------------------------------------------------------------------------------------
 
-nibble0 <= Moore_output;
-nibble1 <= "0000";
+nibble0 <= floor_output;
+nibble1 <= next_floor_output;
 nibble2 <= "0000";
 nibble3 <= "0000";
 
