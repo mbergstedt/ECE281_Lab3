@@ -24,3 +24,10 @@ was stopped at.  The functionality matched the CE3 simulation, with the next flo
 higher if the elevator was moving up, one floor lower if the elevator was moving down, or the current floor if the
 elevator was stopped. A difference between the actual output and the simulation exists because I adjusted the code for
 the output while I was working on the lab. Capt Silva verified my Mealy functionality.
+
+#Functionality
+- basic Moore
+- basic Mealy
+- More Floors
+- Change Inputs
+- Moving Lights (3 points of 5)
