@@ -15,7 +15,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx primitives in this code.
@@ -96,7 +96,7 @@ signal ClockBus_sig : STD_LOGIC_VECTOR (26 downto 0);
 	PORT(
 		clk : IN std_logic;
 		reset : IN std_logic;
-		to_floor : IN std_logic_vector(2 downto 0);
+		to_floor : IN std_logic_vector(3 downto 0); -- change to 3 to be able to use for light direction
 --		stop : IN std_logic;
 --		up_down : IN std_logic;          
 		floor : OUT std_logic_vector(3 downto 0)
@@ -121,6 +121,10 @@ signal ClockBus_sig : STD_LOGIC_VECTOR (26 downto 0);
 --------------------------------------------------------------------------------------
 
 signal floor_output : std_logic_vector(3 downto 0);
+signal target_floor : std_logic_vector(3 downto 0); -- include to use at end for determining to go up or down
+		-- with lights
+-- create signals to hold lights
+signal lights_up, lights_down : std_logic_vector(7 downto 0);
 --signal tens_output : std_logic_vector(3 downto 0); -- use for tens place in more floors
 --signal next_floor_output : std_logic_vector(3 downto 0);
 
@@ -129,7 +133,27 @@ begin
 ----------------------------
 --code below tests the LEDs:
 ----------------------------
-LED <= CLOCKBUS_SIG(26 DOWNTO 19);
+--LED <= CLOCKBUS_SIG(26 DOWNTO 19);
+-- lights up moves same as before
+lights_up <= CLOCKBUS_SIG(26 DOWNTO 19);
+-- for lights down go in opposite direction
+lights_down(0) <= CLOCKBUS_SIG(26);
+lights_down(1) <= CLOCKBUS_SIG(25);
+lights_down(2) <= CLOCKBUS_SIG(24);
+lights_down(3) <= CLOCKBUS_SIG(23);
+lights_down(4) <= CLOCKBUS_SIG(22);
+lights_down(5) <= CLOCKBUS_SIG(21);
+lights_down(6) <= CLOCKBUS_SIG(20);
+lights_down(7) <= CLOCKBUS_SIG(19);
+
+-------------------------------
+-- instantiate target signal --
+-------------------------------
+
+target_floor(0) <= switch(0);
+target_floor(1) <= switch(1);
+target_floor(2) <= switch(2);
+target_floor(3) <= '0';
 
 --------------------------------------------------------------------------------------------	
 --This code instantiates the Clock Divider. Reference the Clock Divider Module for more info
@@ -145,9 +169,7 @@ LED <= CLOCKBUS_SIG(26 DOWNTO 19);
 	Inst_MooreElevatorController_Shell: MooreElevatorController_Shell PORT MAP(
 		clk => ClockBus_sig(25),
 		reset => btn(0),
-		to_floor(0) => switch(0),
-		to_floor(1) => switch(1),
-		to_floor(2) => switch(2),
+		to_floor => target_floor,
 --		stop => switch(1),
 --		up_down => switch(0),
 		floor => floor_output
@@ -223,6 +245,9 @@ nibble3 <= "0000";
 --Instantiate the design you with to implement below and start wiring it up!:
 -----------------------------------------------------------------------------
 
+LED <= lights_up when (std_logic_vector(unsigned(target_floor)+1) > floor_output) else -- use type cast since
+		 lights_down when (std_logic_vector(unsigned(target_floor)+1) < floor_output) else -- target floor ends up
+		 "00000000"; -- at one lower than the actual floor
 
 end Behavioral;
 
