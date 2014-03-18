@@ -23,7 +23,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity MooreElevatorController_Shell is
     Port ( clk : in  STD_LOGIC;
            reset : in  STD_LOGIC;
-			  to_floor : in STD_LOGIC_VECTOR (2 downto 0); -- use for the change inputs functionality
+			  to_floor : in STD_LOGIC_VECTOR (3 downto 0); -- use for the change inputs functionality
+			  -- changed to 3 for use with light direction
 --           stop : in  STD_LOGIC;
 --           up_down : in  STD_LOGIC;
            floor : out  STD_LOGIC_VECTOR (3 downto 0)); -- use for ones digit in more floors functionality
@@ -128,7 +129,7 @@ begin -- adjust for prime numbers
 			--"don't stop" which floor do we want to go to?
 --			if (up_down='1' and stop='0') then 
 				--floor2 right?? This makes sense!
-			if (to_floor > "000") then -- going to a floor greater than the one currently on
+			if (to_floor > "0000") then -- going to a floor greater than the one currently on
 				next_state <= floor2;
 			--otherwise we're going to stay at floor1
 			else
@@ -139,11 +140,11 @@ begin -- adjust for prime numbers
 			--if up_down is set to "go up" and stop is set to 
 			--"don't stop" which floor do we want to go to?
 --			if (up_down='1' and stop='0') then 
-			if (to_floor > "001") then 
+			if (to_floor > "0001") then 
 				next_state <= floor3; 			
 			--if up_down is set to "go down" and stop is set to 
 			--"don't stop" which floor do we want to go to?
-			elsif (to_floor < "001") then -- going to floor lower than the one currently on
+			elsif (to_floor < "0001") then -- going to floor lower than the one currently on
 				next_state <= floor1;
 			--otherwise we're going to stay at floor2
 			else
@@ -153,10 +154,10 @@ begin -- adjust for prime numbers
 --COMPLETE THE NEXT STATE LOGIC ASSIGNMENTS FOR FLOORS 3 AND 4
 		when floor3 =>
 			--going up and not stopping, go up one floor
-			if (to_floor > "010") then 
+			if (to_floor > "0010") then 
 				next_state <= floor4;
 			--not going up and not stopping, go down one floor
-			elsif (to_floor < "010") then 
+			elsif (to_floor < "0010") then 
 				next_state <= floor2;
 			--stopping, so stay on floor
 			else
@@ -164,10 +165,10 @@ begin -- adjust for prime numbers
 			end if;
 		when floor4 =>
 			--going up and not stopping, go up one floor
-			if (to_floor > "011") then 
+			if (to_floor > "0011") then 
 				next_state <= floor5;
 			--not going up and not stopping, go down one floor
-			elsif (to_floor < "011") then 
+			elsif (to_floor < "0011") then 
 				next_state <= floor3;
 			else 
 				next_state <= floor4;
@@ -175,10 +176,10 @@ begin -- adjust for prime numbers
 		-- floor 5
 		when floor5 =>
 			--going up and not stopping, go up one floor
-			if (to_floor > "100") then 
+			if (to_floor > "0100") then 
 				next_state <= floor6;
 			--not going up and not stopping, go down one floor
-			elsif (to_floor < "100") then 
+			elsif (to_floor < "0100") then 
 				next_state <= floor4;
 			else 
 				next_state <= floor5;
@@ -186,10 +187,10 @@ begin -- adjust for prime numbers
 		-- floor 6
 		when floor6 =>
 			--going up and not stopping, go up one floor
-			if (to_floor > "101") then 
+			if (to_floor > "0101") then 
 				next_state <= floor7;
 			--not going up and not stopping, go down one floor
-			elsif (to_floor < "101") then 
+			elsif (to_floor < "0101") then 
 				next_state <= floor5;
 			else 
 				next_state <= floor6;
@@ -197,10 +198,10 @@ begin -- adjust for prime numbers
 		-- floor 7
 		when floor7 =>
 			--going up and not stopping, go up one floor
-			if (to_floor > "110") then 
+			if (to_floor > "0110") then 
 				next_state <= floor8;
 			--not going up and not stopping, go down one floor
-			elsif (to_floor < "110") then 
+			elsif (to_floor < "0110") then 
 				next_state <= floor6;
 			else 
 				next_state <= floor7;
@@ -208,7 +209,7 @@ begin -- adjust for prime numbers
 		-- floor 8
 		when floor8 =>
 			--not going up and not stopping, go down one floor
-			if (to_floor < "111") then 
+			if (to_floor < "0111") then 
 				next_state <= floor7;
 			else -- at topp
 				next_state <= floor8;
