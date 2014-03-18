@@ -96,10 +96,11 @@ signal ClockBus_sig : STD_LOGIC_VECTOR (26 downto 0);
 	PORT(
 		clk : IN std_logic;
 		reset : IN std_logic;
-		stop : IN std_logic;
-		up_down : IN std_logic;          
-		floor : OUT std_logic_vector(3 downto 0);
-		floor_ten : OUT std_logic_vector(3 downto 0)
+		to_floor : IN std_logic_vector(2 downto 0);
+--		stop : IN std_logic;
+--		up_down : IN std_logic;          
+		floor : OUT std_logic_vector(3 downto 0)
+--		floor_ten : OUT std_logic_vector(3 downto 0) -- include for more floors
 		);
 	END COMPONENT;
 	-- include Mealy
@@ -120,7 +121,7 @@ signal ClockBus_sig : STD_LOGIC_VECTOR (26 downto 0);
 --------------------------------------------------------------------------------------
 
 signal floor_output : std_logic_vector(3 downto 0);
-signal tens_output : std_logic_vector(3 downto 0); -- use for tens place in more floors
+--signal tens_output : std_logic_vector(3 downto 0); -- use for tens place in more floors
 --signal next_floor_output : std_logic_vector(3 downto 0);
 
 begin
@@ -144,10 +145,13 @@ LED <= CLOCKBUS_SIG(26 DOWNTO 19);
 	Inst_MooreElevatorController_Shell: MooreElevatorController_Shell PORT MAP(
 		clk => ClockBus_sig(25),
 		reset => btn(0),
-		stop => switch(1),
-		up_down => switch(0),
-		floor => floor_output,
-		floor_ten => tens_output
+		to_floor(0) => switch(0),
+		to_floor(1) => switch(1),
+		to_floor(2) => switch(2),
+--		stop => switch(1),
+--		up_down => switch(0),
+		floor => floor_output
+--		floor_ten => tens_output
 	);
 	
 ----------------------------------
@@ -173,7 +177,7 @@ LED <= CLOCKBUS_SIG(26 DOWNTO 19);
 --------------------------------------------------------------------------------------
 
 nibble0 <= floor_output;
-nibble1 <= tens_output; -- with mealy, next_floor_output
+nibble1 <= "0000"; -- with mealy, next_floor_output; with more floors, tens_output
 nibble2 <= "0000";
 nibble3 <= "0000";
 
